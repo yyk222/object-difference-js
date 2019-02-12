@@ -1,7 +1,7 @@
 {
   "name": "object-difference-js",
-  "version": "0.0.4",
-  "description": "get object difference between two JavaScript objects",
+  "version": "0.1.0",
+  "description": "get deep difference between two JavaScript objects",
   "main": "lib/object-difference-js.min.js",
   "scripts": {
     "build": "webpack --env dev && webpack --env build && npm run test",
