@@ -1,15 +1,15 @@
-import anyToString from './anyToString.js';
+import anyToString from "./anyToString.js";
 
-const VALUE_CREATED = 'created',
-  VALUE_UPDATED = 'updated',
-  VALUE_DELETED = 'deleted',
-  NOT_COMPARABLE = 'NA';
+const VALUE_CREATED = "created",
+  VALUE_UPDATED = "updated",
+  VALUE_DELETED = "deleted",
+  NOT_COMPARABLE = "NA";
 
 function _isBlank(t) {
-  return t === '' || t === 0 || t === undefined || t === null || t === {} || (Array.isArray(t) && t.length < 1);
+  return t === "" || t === 0 || t === undefined || t === null || t === {} || (Array.isArray(t) && t.length < 1);
 }
 function _isValue(t) {
-  return !_isBlank(t) && (typeof t === 'boolean' || typeof t === 'number' || typeof t === 'string');
+  return !_isBlank(t) && (typeof t === "boolean" || typeof t === "number" || typeof t === "string");
 }
 function _isDate(t) {
   return !_isBlank(t) && t instanceof Date;
@@ -18,7 +18,7 @@ function _isArray(t) {
   return !_isBlank(t) && Array.isArray(t);
 }
 function _isFunction(t) {
-  return typeof t === 'function';
+  return typeof t === "function";
 }
 function _isObject(t) {
   return !_isValue(t) && !_isBlank(t) && !_isDate(t) && !_isArray(t) && !_isFunction(t);
@@ -37,7 +37,7 @@ function _getArrayDiffence(parentName, propertyName, a1, a2) {
         continue;
       } else {
         for (let i = 0; i < a1.length; i++) {
-          diff = diff.concat(GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, a1[i], a2[i])); // eslint-disable-line no-use-before-define
+          diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, a1[i], a2[i])); // eslint-disable-line no-use-before-define
         }
       }
     }
@@ -65,33 +65,24 @@ function _getArrayDiffence(parentName, propertyName, a1, a2) {
   }
 
   let onlyInA1 = a1.filter(comparer(a2));
+
   let onlyInA2 = a2.filter(comparer(a1));
 
   for (let i = 0; i < onlyInA1.length; i++) {
-    diff = diff.concat(GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, onlyInA1[i], undefined)); // eslint-disable-line no-use-before-define
+    diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, onlyInA1[i], undefined)); // eslint-disable-line no-use-before-define
   }
 
   for (let i = 0; i < onlyInA2.length; i++) {
-    diff = diff.concat(GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, undefined, onlyInA2[i])); // eslint-disable-line no-use-before-define
+    diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, undefined, onlyInA2[i])); // eslint-disable-line no-use-before-define
   }
 
   return diff;
 }
 
-/**
- * Get deep object difference
- *
- * @export
- * @param {*} parentName
- * @param {*} propertyName
- * @param {*} valueFrom
- * @param {*} valueTo
- * @returns
- */
-export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo) {
+function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo) {
   let diff = [];
 
-  if (propertyName === '__ob__' || propertyName === '__proto__') {
+  if (propertyName === "__ob__" || propertyName === "__proto__") {
     return diff;
   }
   // case: 两个都是基础类型
@@ -106,7 +97,6 @@ export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo
       to: valueTo
     });
     return diff;
-
   }
 
   // case: 排除有function的情况
@@ -132,7 +122,6 @@ export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo
       to: anyToString(valueTo)
     });
     return diff;
-
   }
 
   // case: 一个是日期，另一个是值
@@ -155,7 +144,7 @@ export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_CREATED,
-      from: '',
+      from: "",
       to: anyToString(valueTo)
     });
     return diff;
@@ -164,20 +153,20 @@ export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_CREATED,
-      from: '',
+      from: "",
       to: anyToString(valueTo)
     });
     return diff;
   }
   if (_isBlank(valueFrom) && _isArray(valueTo)) {
     for (let i = 0; i < valueTo.length; i++) {
-      diff = diff.concat(GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, undefined, valueTo[i]));
+      diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, undefined, valueTo[i]));
     }
     return diff;
   }
   if (_isBlank(valueFrom) && _isObject(valueTo)) {
     Object.getOwnPropertyNames(valueTo).forEach(function (val, idx, array) {
-      diff = diff.concat(GetObjectDifference(_getFullPropName(parentName, propertyName), val, undefined, valueTo[val]));
+      diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), val, undefined, valueTo[val]));
     });
     return diff;
   }
@@ -186,8 +175,8 @@ export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_DELETED,
-      from: '',
-      to: ''
+      from: "",
+      to: ""
     });
     return diff;
   }
@@ -197,12 +186,12 @@ export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_DELETED,
-      from: '',
-      to: ''
+      from: "",
+      to: ""
     });
 
     for (let i = 0; i < valueTo.length; i++) {
-      diff = diff.concat(GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, undefined, valueTo[i]));
+      diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, undefined, valueTo[i]));
     }
 
     return diff;
@@ -213,12 +202,12 @@ export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_DELETED,
-      from: '',
-      to: ''
+      from: "",
+      to: ""
     });
 
     Object.getOwnPropertyNames(valueTo).forEach(function (val, idx, array) {
-      diff = diff.concat(GetObjectDifference(_getFullPropName(parentName, propertyName), val, undefined, valueTo[val]));
+      diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), val, undefined, valueTo[val]));
     });
 
     return diff;
@@ -247,11 +236,11 @@ export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_DELETED,
       from: `Array[${valueFrom.length}]`,
-      to: ''
+      to: ""
     });
 
     Object.getOwnPropertyNames(valueTo).forEach(function (val, idx, array) {
-      diff = diff.concat(GetObjectDifference(_getFullPropName(parentName, propertyName), val, undefined, valueTo[val]));
+      diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), val, undefined, valueTo[val]));
     });
 
     return diff;
@@ -262,7 +251,7 @@ export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_UPDATED,
-      from: '{}',
+      from: "{}",
       to: anyToString(valueTo)
     });
 
@@ -273,11 +262,11 @@ export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_DELETED,
-      from: '{}',
+      from: "{}",
       to: anyToString(valueTo)
     });
     for (let i = 0; i < valueTo.length; i++) {
-      diff = diff.concat(GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, undefined, valueTo[i]));
+      diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), `[${i}]`, undefined, valueTo[i]));
     }
     return diff;
   }
@@ -285,16 +274,28 @@ export function GetObjectDifference(parentName, propertyName, valueFrom, valueTo
   // case: From是Object，To是Object
   if (_isObject(valueFrom) && _isObject(valueTo)) {
     Object.getOwnPropertyNames(valueFrom).forEach(function (val, idx, array) {
-      diff = diff.concat(GetObjectDifference(_getFullPropName(parentName, propertyName), val, valueFrom[val], valueTo[val]));
+      diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), val, valueFrom[val], valueTo[val]));
     });
     Object.getOwnPropertyNames(valueTo).forEach(function (val, idx, array) {
       if (valueFrom[val] !== undefined) {
         return;
       }
-      diff = diff.concat(GetObjectDifference(_getFullPropName(parentName, propertyName), val, undefined, valueTo[val]));
-
+      diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), val, undefined, valueTo[val]));
     });
   }
 
   return diff;
-};
+}
+
+/**
+ * Get deep difference between two objects. An empty array will be returned for two same objects comparing.
+ *
+ * @export
+ * @param {*} propertyName object name, as the root property name
+ * @param {*} valueFrom value comparing on the left
+ * @param {*} valueTo value comparing on the right
+ * @returns
+ */
+export function GetObjectDifference(objectName, valueFrom, valueTo) {
+  return _GetObjectDifference("", objectName, valueFrom, valueTo);
+}
