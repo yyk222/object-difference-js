@@ -51,7 +51,7 @@
     "keyword-spacing": [2, {"before": true, "after": true}],
     "linebreak-style": 0,
     "max-depth": 0,
-    "max-len": [2, 280, 4],
+    "max-len": [2, 220, 4],
     "max-nested-callbacks": 0,
     "max-params": 0,
     "max-statements": 0,

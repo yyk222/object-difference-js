@@ -4,7 +4,6 @@ const webpack = require('webpack');
 const path = require('path');
 const env = require('yargs').argv.env; // use --env with webpack 2
 const pkg = require('./package.json');
-
 let libraryName = pkg.name;
 
 let outputFile, mode;
@@ -24,7 +23,7 @@ const config = {
   output: {
     path: __dirname + '/lib',
     filename: outputFile,
-    library: libraryName,
+    library: "ObjDiff",
     libraryTarget: 'umd',
     umdNamedDefine: true,
     globalObject: "typeof self !== 'undefined' ? self : this"

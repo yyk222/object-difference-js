@@ -87,7 +87,7 @@ function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo) {
   }
   // case: 两个都是基础类型
   if (_isValue(valueFrom) && _isValue(valueTo)) {
-    if (valueFrom === valueTo) {
+    if (valueFrom == valueTo) {     // eslint-disable-line
       return diff;
     }
     diff.push({
