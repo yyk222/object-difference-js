@@ -20,8 +20,11 @@ function _isArray(t) {
 function _isFunction(t) {
   return typeof t === "function";
 }
+function _isSymbol(t) {
+  return typeof t === 'symbol'
+}
 function _isObject(t) {
-  return !_isValue(t) && !_isBlank(t) && !_isDate(t) && !_isArray(t) && !_isFunction(t);
+  return !_isValue(t) && !_isBlank(t) && !_isDate(t) && !_isArray(t) && !_isFunction(t) && !_isSymbol(t);
 }
 
 function _getFullPropName(parentName, propertyName) {
@@ -104,6 +107,17 @@ function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo) {
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: NOT_COMPARABLE,
+      from: anyToString(valueFrom),
+      to: anyToString(valueTo)
+    });
+    return diff;
+  }
+
+  // case: 其中一个是symbol
+  if (_isSymbol(valueFrom) || _isSymbol(valueTo)) {
+    diff.push({
+      property: _getFullPropName(parentName, propertyName),
+      type: updated,
       from: anyToString(valueFrom),
       to: anyToString(valueTo)
     });
