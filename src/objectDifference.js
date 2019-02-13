@@ -21,7 +21,7 @@ function _isFunction(t) {
   return typeof t === "function";
 }
 function _isSymbol(t) {
-  return typeof t === 'symbol'
+  return typeof t === "symbol";
 }
 function _isObject(t) {
   return !_isValue(t) && !_isBlank(t) && !_isDate(t) && !_isArray(t) && !_isFunction(t) && !_isSymbol(t);
@@ -117,7 +117,7 @@ function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo) {
   if (_isSymbol(valueFrom) || _isSymbol(valueTo)) {
     diff.push({
       property: _getFullPropName(parentName, propertyName),
-      type: updated,
+      type: VALUE_UPDATED,
       from: anyToString(valueFrom),
       to: anyToString(valueTo)
     });
