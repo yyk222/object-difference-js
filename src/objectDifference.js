@@ -90,7 +90,7 @@ function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo) {
   }
   // case: 两个都是基础类型
   if (_isValue(valueFrom) && _isValue(valueTo)) {
-    if (valueFrom == valueTo) {     // eslint-disable-line
+    if (valueFrom == valueTo) { // eslint-disable-line
       return diff;
     }
     diff.push({
@@ -139,7 +139,22 @@ function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo) {
   }
 
   // case: 一个是日期，另一个是值
-  if ((_isDate(valueFrom) && _isValue(valueTo)) || (_isDate(valueTo) && _isValue(valueFrom))) {
+  if (_isDate(valueTo) && _isValue(valueFrom)) {
+    if (new Date(valueFrom).getTime() === valueTo.getTime()) {
+      return diff;
+    }
+    diff.push({
+      property: _getFullPropName(parentName, propertyName),
+      type: VALUE_UPDATED,
+      from: anyToString(valueFrom),
+      to: anyToString(valueTo)
+    });
+    return diff;
+  }
+  if (_isDate(valueFrom) && _isValue(valueTo)) {
+    if (new Date(valueTo).getTime() === valueFrom.getTime()) {
+      return diff;
+    }
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_UPDATED,
