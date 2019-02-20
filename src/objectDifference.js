@@ -207,6 +207,9 @@ function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo, conf
   }
   // case: From是blank, To不是
   if (_isBlank(valueFrom) && _isValue(valueTo)) {
+    if(!valueTo) {  //eslint-disable-line
+      return diff;
+    }
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_CREATED,
@@ -238,6 +241,9 @@ function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo, conf
   }
   // case: From不是blank, To是
   if ((_isValue(valueFrom) || _isDate(valueFrom) || _isArray(valueFrom) || _isObject(valueFrom)) && _isBlank(valueTo)) {
+    if (!valueFrom) {
+      return diff;
+    }
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_DELETED,
