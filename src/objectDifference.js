@@ -36,7 +36,7 @@ function _getArrayDiffence(parentName, propertyName, a1, a2) {
 
   if (a1.length === a2.length) {
     for (let i = 0; i < a1.length; i++) {
-      if (JSON.stringify(a1) === JSON.stringify(a2)) {
+      if (JSON.stringify(a1[i]) === JSON.stringify(a2[i])) {
         continue;
       } else {
         for (let i = 0; i < a1.length; i++) {
