@@ -81,8 +81,45 @@ function _getArrayDiffence(parentName, propertyName, a1, a2) {
 
   return diff;
 }
+function _getArrayDiffenceByKey(parentName, propertyName, a1, a2, keyProp) {
+  let diff = [];
 
-function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo) {
+  function comparer(otherArray) {
+    return function (current) {
+      return (
+        otherArray.filter(function (other) {
+          return other[keyProp] === current[keyProp];
+        }).length === 0
+      );
+    };
+  }
+
+  let onlyInA1 = a1.filter(comparer(a2));
+
+  let onlyInA2 = a2.filter(comparer(a1));
+
+  for (let i = 0; i < onlyInA1.length; i++) {
+    diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), `[${keyProp}=${onlyInA1[i][keyProp]}]`, onlyInA1[i], undefined)); // eslint-disable-line no-use-before-define
+  }
+
+  for (let i = 0; i < onlyInA2.length; i++) {
+    diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), `[${keyProp}=${onlyInA2[i][keyProp]}]`, undefined, onlyInA2[i])); // eslint-disable-line no-use-before-define
+  }
+
+  for (let i = 0; i < a1.length; i++) {
+    let a2Item = a2.find(x => {
+      return x[keyProp] === a1[i][keyProp];
+    });
+
+    if (a2Item) {
+      diff = diff.concat(_GetObjectDifference(_getFullPropName(parentName, propertyName), `[${keyProp}=${a1[i][keyProp]}]`, a1[i], a2Item)); // eslint-disable-line no-use-before-define
+    }
+  }
+
+  return diff;
+}
+
+function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo, config = {}) {
   let diff = [];
 
   if (propertyName === "__ob__" || propertyName === "__proto__") {
@@ -255,12 +292,34 @@ function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo) {
 
   // case: From是Array，To是Array
   if (_isArray(valueFrom) && _isArray(valueTo)) {
-    diff = diff.concat(_getArrayDiffence(parentName, propertyName, valueFrom, valueTo));
+    if (config.ArrayKeyProperty) {
+      // check whether Array element has the key
+      let missKeyProp = false;
+
+      for (let i = 0; i < valueFrom.length; i++) {
+        if (valueFrom[i][config.ArrayKeyProperty] === undefined) {
+          missKeyProp = true;
+        }
+      }
+      for (let i = 0; i < valueTo.length; i++) {
+        if (valueTo[i][config.ArrayKeyProperty] === undefined) {
+          missKeyProp = true;
+        }
+      }
+
+      if (!missKeyProp) {
+        diff = diff.concat(_getArrayDiffenceByKey(parentName, propertyName, valueFrom, valueTo, config.ArrayKeyProperty));
+      } else {
+        diff = diff.concat(_getArrayDiffence(parentName, propertyName, valueFrom, valueTo));
+      }
+    } else {
+      diff = diff.concat(_getArrayDiffence(parentName, propertyName, valueFrom, valueTo));
+    }
     return diff;
   }
 
   // case: From是Array，To是Object
-  if (_isArray(valueFrom) && _isArray(valueTo)) {
+  if (_isArray(valueFrom) && _isObject(valueTo)) {
     diff.push({
       property: _getFullPropName(parentName, propertyName),
       type: VALUE_DELETED,
@@ -325,6 +384,6 @@ function _GetObjectDifference(parentName, propertyName, valueFrom, valueTo) {
  * @param {*} valueTo value comparing on the right
  * @returns
  */
-export function GetObjectDifference(objectName, valueFrom, valueTo) {
-  return _GetObjectDifference("", objectName, valueFrom, valueTo);
+export function GetObjectDifference(objectName, valueFrom, valueTo, config = {}) {
+  return _GetObjectDifference("", objectName, valueFrom, valueTo, config);
 }
