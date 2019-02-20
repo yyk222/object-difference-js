@@ -1,6 +1,6 @@
 {
   "name": "object-difference-js",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "get deep difference between two JavaScript objects",
   "main": "lib/object-difference-js.min.js",
   "scripts": {
